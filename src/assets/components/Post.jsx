@@ -20,7 +20,8 @@ const Post = ({ post }) => {
         </span>
         <p className="card-text">{post.body}</p>
         <p className="alert alert-success reactions" role="alert">
-          This post has been reacted by {post.reactions} people.
+          This post has been reacted by
+          {post.reactions.dislikes + post.reactions.likes} people.
         </p>
         <p>{post.userId}</p>
 

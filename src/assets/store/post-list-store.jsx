@@ -48,6 +48,7 @@ const StoreContext = ({ children }) => {
   };
 
   const addInitialPost = (posts) => {
+    console.log(posts);
     const newFetchPost = posts;
     setPostItems(newFetchPost);
   };

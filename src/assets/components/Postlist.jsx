@@ -14,6 +14,7 @@ const Postlist = () => {
     fetch("https://dummyjson.com/posts")
       .then((res) => res.json())
       .then((data) => {
+        // console.log(data.posts);
         addInitialPost(data.posts);
 
         setLoading(false);
