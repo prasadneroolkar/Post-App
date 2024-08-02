@@ -1,15 +1,14 @@
 import { createContext } from "react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
-export const PostContextList = createContext(
-  null
-  // {
-  //   postItem: [],
-  //   addPost: () => {},
-  //   delPost: () => {},
-  //   addInitialPost: () => {},
-  // },
-);
+export const PostContextList = createContext(null);
+// null
+// {
+//   postItem: [],
+//   addPost: () => {},
+//   delPost: () => {},
+//   addInitialPost: () => {},
+// },
 
 const StoreContext = ({ children }) => {
   const DEFAULT_POST_LIST = [];
@@ -22,71 +21,85 @@ const StoreContext = ({ children }) => {
     // console.log("delted id :" + postID);
   };
 
-  const addPost = (
-    postID,
-    postTitle,
-    postBody,
-    postReact,
-    postUser,
-    postTag
-  ) => {
-    console.log(
-      `added: ${postID}, ${postTitle} ,${postBody}  ${postReact}  ${postUser}  ${postTag}
+  useCallback(() => {}, []);
+
+  // useCallback(() => {}, []);
+
+  const addPost = useCallback(
+    (
+      postID,
+      postTitle,
+      postBody,
+      postReactions,
+      postUser,
+      postTag,
+      postviews = 10
+    ) => {
+      console.log(
+        `added: ${postID}, ${postTitle} ,${postBody}  ${JSON.stringify(
+          postReactions
+        )}  ${postUser}  ${postTag},${postviews}
     `
-    );
-    const newAddItem = [
-      ...postItem,
-      {
-        id: postID,
-        title: postTitle,
-        body: postBody,
-        userId: postUser,
-        tags: postTag,
-        reactions: postReact,
-      },
-    ];
-    setPostItems(newAddItem);
-  };
-
-  const addPostToApi = async (post) => {
-    try {
-      const response = await fetch("https://dummyjson.com/posts/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(post),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to add post");
-      }
-      const data = await response.json();
-      addPost(
-        data.id,
-        data.title,
-        data.body,
-        data.reactions,
-        data.userId,
-        data.tags
       );
-      return data;
-    } catch (error) {
-      console.error("Error adding post:", error);
-      return null;
-    }
-  };
+      const newAddItem = [
+        ...postItem,
+        {
+          id: postID,
+          title: postTitle,
+          body: postBody,
+          userId: postUser,
+          tags: postTag,
+          reactions: postReactions,
+          views: postviews,
+        },
+      ];
+      setPostItems(newAddItem);
+    },
+    [postItem]
+  );
 
-  const fetchPost = async () => {
+  const addPostToApi = useCallback(
+    async (post) => {
+      try {
+        const response = await fetch("https://dummyjson.com/posts/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(post),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to add post");
+        }
+        const data = await response.json();
+        addPost(
+          data.id,
+          data.title,
+          data.body,
+          data.reactions,
+          data.userId,
+          data.tags,
+          data.views
+        );
+        return data;
+      } catch (error) {
+        console.error("Error adding post:", error);
+        return null;
+      }
+    },
+    [addPost]
+  );
+
+  const fetchPost = useCallback(async () => {
     try {
       const response = await fetch("https://dummyjson.com/posts");
       const data = await response.json();
       setPostItems(data.posts);
-      // console.log(data.posts);
-      // addInitialPost(data.posts);
+      console.log("in fetch function", data.posts); // Update the state with the latest posts
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
-  };
+  }, []);
 
   return (
     <PostContextList.Provider

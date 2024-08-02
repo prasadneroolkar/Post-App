@@ -8,22 +8,26 @@ const Createpost = () => {
   const useTitle = useRef();
   const useBody = useRef();
   const useReact = useRef();
+  const useDis = useRef();
   const useId = useRef();
   const useTag = useRef();
 
   const postAdd = async (e) => {
     e.preventDefault();
 
-    const postTitle = useTitle.current.value;
-    const postBody = useBody.current.value;
-    const postReact = Number(useReact.current.value);
-    const postId = Number(useId.current.value);
-    const postTag = useTag.current.value.split(" ");
+    const postTitle = useTitle.current.value.trim();
+    const postBody = useBody.current.value.trim();
+    const postReact = parseInt(useReact.current.value, 10) || 0;
+    const postDis = parseInt(useDis.current.value, 10) || 0;
+    const postId = parseInt(useId.current.value, 10) || 0;
+    const postTag = useTag.current.value
+      .split(/\s+/)
+      .filter((tag) => tag.trim() !== "");
 
     const newItems = {
       title: postTitle,
       body: postBody,
-      reactions: postReact,
+      reactions: { likes: postReact, dislikes: postDis },
       userId: postId,
       tags: postTag,
     };
@@ -33,6 +37,7 @@ const Createpost = () => {
       useTitle.current.value = "";
       useBody.current.value = "";
       useReact.current.value = "";
+      useDis.current.value = "";
       useId.current.value = "";
       useTag.current.value = "";
     }
@@ -79,7 +84,7 @@ const Createpost = () => {
       </div>
       <div className="mb-3">
         <label htmlFor="reactions" className="form-label">
-          Number of reactions
+          Number of Likes
         </label>
         <input
           ref={useReact}
@@ -87,6 +92,18 @@ const Createpost = () => {
           className="form-control"
           id="reactions"
           placeholder="How many people reacted to this post"
+        />
+      </div>
+      <div className="mb-3">
+        <label htmlFor="dislikes" className="form-label">
+          Number of dislikes
+        </label>
+        <input
+          ref={useDis}
+          type="text"
+          className="form-control"
+          id="dislikes"
+          placeholder="How many people disliked"
         />
       </div>
 

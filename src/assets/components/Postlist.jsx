@@ -11,14 +11,14 @@ const Postlist = () => {
   useEffect(() => {
     const loadPosts = async () => {
       setLoading(true);
-      // console.log("loading (before await):", fetchLoading); // false
+
       await fetchPost();
+      // console.log("Fetched posts:", postItem); // Log the posts after fetching
       setLoading(false);
-      // console.log("loading (after await):", fetchLoading); // still false
     };
 
     loadPosts();
-  }, []);
+  }, [fetchPost]);
 
   return (
     <>
