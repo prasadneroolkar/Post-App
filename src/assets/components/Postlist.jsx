@@ -6,19 +6,18 @@ import Welcomemsg from "./Welcomemsg";
 import Loading from "./Loading";
 
 const Postlist = () => {
-  const { postItem, addInitialPost } = useContext(PostContextList);
+  const { postItem, fetchPost } = useContext(PostContextList);
   const [fetchLoading, setLoading] = useState(false);
   useEffect(() => {
-    setLoading(true);
+    const loadPosts = async () => {
+      setLoading(true);
+      console.log("loading (before await):", fetchLoading); // false
+      await fetchPost();
+      setLoading(false);
+      console.log("loading (after await):", fetchLoading); // still false
+    };
 
-    fetch("https://dummyjson.com/posts")
-      .then((res) => res.json())
-      .then((data) => {
-        // console.log(data.posts);
-        addInitialPost(data.posts);
-
-        setLoading(false);
-      });
+    loadPosts();
   }, []);
 
   return (

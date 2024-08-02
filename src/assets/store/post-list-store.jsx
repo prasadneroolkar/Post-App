@@ -1,14 +1,15 @@
 import { createContext } from "react";
 import { useState } from "react";
 
-export const PostContextList = createContext([
-  {
-    postItem: [],
-    addPost: () => {},
-    delPost: () => {},
-    addInitialPost: () => {},
-  },
-]);
+export const PostContextList = createContext(
+  null
+  // {
+  //   postItem: [],
+  //   addPost: () => {},
+  //   delPost: () => {},
+  //   addInitialPost: () => {},
+  // },
+);
 
 const StoreContext = ({ children }) => {
   const DEFAULT_POST_LIST = [];
@@ -48,9 +49,29 @@ const StoreContext = ({ children }) => {
   };
 
   const addInitialPost = (posts) => {
-    console.log(posts);
-    const newFetchPost = posts;
-    setPostItems(newFetchPost);
+    const result = Array.isArray(posts);
+
+    if (result) {
+      // console.log(result);
+      const newFetchPost = posts;
+      setPostItems(newFetchPost);
+    } else {
+      console.log(`${posts} is not an array.`);
+    }
+  };
+
+  const fetchPost = async () => {
+    try {
+      const response = await fetch("https://dummyjson.com/posts");
+      const data = await response.json();
+      // console.log(data.posts);
+      // const arry = Array.isArray(data.posts);
+      // console.log(arry);
+      // console.log(data.posts);
+      addInitialPost(data.posts);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
   };
 
   return (
@@ -60,6 +81,7 @@ const StoreContext = ({ children }) => {
         addPost,
         delPost,
         addInitialPost,
+        fetchPost,
       }}
     >
       {children}
