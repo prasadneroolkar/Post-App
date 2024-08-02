@@ -11,10 +11,10 @@ const Postlist = () => {
   useEffect(() => {
     const loadPosts = async () => {
       setLoading(true);
-      console.log("loading (before await):", fetchLoading); // false
+      // console.log("loading (before await):", fetchLoading); // false
       await fetchPost();
       setLoading(false);
-      console.log("loading (after await):", fetchLoading); // still false
+      // console.log("loading (after await):", fetchLoading); // still false
     };
 
     loadPosts();

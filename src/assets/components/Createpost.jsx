@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { PostContextList } from "../store/post-list-store";
 
 const Createpost = () => {
-  const { addPost } = useContext(PostContextList);
+  const { addPostToApi } = useContext(PostContextList);
 
   const useTitle = useRef();
   const useBody = useRef();
@@ -11,21 +11,31 @@ const Createpost = () => {
   const useId = useRef();
   const useTag = useRef();
 
-  const postAdd = (e) => {
+  const postAdd = async (e) => {
     e.preventDefault();
 
     const postTitle = useTitle.current.value;
     const postBody = useBody.current.value;
-    const postReact = useReact.current.value;
-    const postId = useId.current.value;
+    const postReact = Number(useReact.current.value);
+    const postId = Number(useId.current.value);
     const postTag = useTag.current.value.split(" ");
 
-    useTitle.current.value = "";
-    useBody.current.value = "";
-    useReact.current.value = "";
-    useId.current.value = "";
-    useTag.current.value = "";
-    addPost(Date.now(), postTitle, postBody, postReact, postId, postTag);
+    const newItems = {
+      title: postTitle,
+      body: postBody,
+      reactions: postReact,
+      userId: postId,
+      tags: postTag,
+    };
+    // addInitialPost(Date.now(), postTitle, postBody, postReact, postId, postTag);
+    const addedPost = await addPostToApi(newItems);
+    if (addedPost) {
+      useTitle.current.value = "";
+      useBody.current.value = "";
+      useReact.current.value = "";
+      useId.current.value = "";
+      useTag.current.value = "";
+    }
   };
 
   return (

@@ -48,15 +48,31 @@ const StoreContext = ({ children }) => {
     setPostItems(newAddItem);
   };
 
-  const addInitialPost = (posts) => {
-    const result = Array.isArray(posts);
-
-    if (result) {
-      // console.log(result);
-      const newFetchPost = posts;
-      setPostItems(newFetchPost);
-    } else {
-      console.log(`${posts} is not an array.`);
+  const addPostToApi = async (post) => {
+    try {
+      const response = await fetch("https://dummyjson.com/posts/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(post),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add post");
+      }
+      const data = await response.json();
+      addPost(
+        data.id,
+        data.title,
+        data.body,
+        data.reactions,
+        data.userId,
+        data.tags
+      );
+      return data;
+    } catch (error) {
+      console.error("Error adding post:", error);
+      return null;
     }
   };
 
@@ -64,11 +80,9 @@ const StoreContext = ({ children }) => {
     try {
       const response = await fetch("https://dummyjson.com/posts");
       const data = await response.json();
+      setPostItems(data.posts);
       // console.log(data.posts);
-      // const arry = Array.isArray(data.posts);
-      // console.log(arry);
-      // console.log(data.posts);
-      addInitialPost(data.posts);
+      // addInitialPost(data.posts);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -80,7 +94,7 @@ const StoreContext = ({ children }) => {
         postItem,
         addPost,
         delPost,
-        addInitialPost,
+        addPostToApi,
         fetchPost,
       }}
     >
